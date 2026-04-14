@@ -26,11 +26,12 @@ public class Timetable {
         sessionsAtTime.add(trainingSession);
     }
 
-    public /* непонятно, что возвращать */ getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
+    public TreeMap<TimeOfDay, List<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
+        return timetable.get(dayOfWeek);
     }
 
-    public /* непонятно, что возвращать */ getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
+    public List<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
+        Map<TimeOfDay, List<TrainingSession>> sessionsForDay = timetable.get(dayOfWeek);
+        return sessionsForDay.get(timeOfDay);
     }
 }
