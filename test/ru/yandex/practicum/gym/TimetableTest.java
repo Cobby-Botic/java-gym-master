@@ -80,4 +80,60 @@ public class TimetableTest {
         Assertions.assertNull(timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(14, 0)));
     }
 
+    @Test //если нет тренировок, карта пуста
+    void testGetCountByCoachesWhenNoSessions() {
+        Timetable timetable = new Timetable();
+
+        Map<Coach, Integer> counts = timetable.getCountByCoaches();
+
+        Assertions.assertNotNull(counts);
+        Assertions.assertTrue(counts.isEmpty());
+    }
+
+    @Test //Один тренер, несколько тренировок в разные дни/времена
+    void testGetCountByCoachesSingleCoachMultipleSessions() {
+        Timetable timetable = new Timetable();
+
+        Coach coach = new Coach("Иванов", "Иван", "Иванович");
+        Group group = new Group("Акробатика", Age.ADULT, 60);
+
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach, DayOfWeek.MONDAY, new TimeOfDay(10, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach, DayOfWeek.MONDAY, new TimeOfDay(12, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach, DayOfWeek.WEDNESDAY, new TimeOfDay(10, 0)));
+
+        Map<Coach, Integer> counts = timetable.getCountByCoaches();
+
+        Assertions.assertEquals(1, counts.size());
+        Assertions.assertEquals(3, counts.get(coach));
+    }
+
+    @Test //Несколько тренеров, разное количество тренировок
+    void testGetCountByCoachesMultipleCoaches() {
+        Timetable timetable = new Timetable();
+
+        Coach coach1 = new Coach("Иванов", "Иван", "Иванович");
+        Coach coach2 = new Coach("Петров", "Пётр", "Петрович");
+        Group group = new Group("Акробатика", Age.ADULT, 60);
+
+        // coach1 – 3 тренировки
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach1, DayOfWeek.MONDAY, new TimeOfDay(10, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach1, DayOfWeek.TUESDAY, new TimeOfDay(11, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach1, DayOfWeek.WEDNESDAY, new TimeOfDay(12, 0)));
+
+        // coach2 – 1 тренировка
+        timetable.addNewTrainingSession(new TrainingSession(
+                group, coach2, DayOfWeek.MONDAY, new TimeOfDay(13, 0)));
+
+        Map<Coach, Integer> counts = timetable.getCountByCoaches();
+
+        Assertions.assertEquals(2, counts.size());
+        Assertions.assertEquals(3, counts.get(coach1));
+        Assertions.assertEquals(1, counts.get(coach2));
+    }
 }
