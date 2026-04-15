@@ -155,4 +155,43 @@ public class TimetableTest {
         Assertions.assertEquals(coach2, second.getCoach());
         Assertions.assertEquals(1, second.getCount());
     }
+
+    @Test // несколько тренировок в одно и то же время
+    void testGetTrainingSessionsForDayAndTimeMultipleSessionsSameTime() {
+        Timetable timetable = new Timetable();
+
+        Group groupChild = new Group("Акробатика для детей", Age.CHILD, 60);
+        Group groupAdult = new Group("Акробатика для взрослых", Age.ADULT, 90);
+        Coach coach1 = new Coach("Иванов", "Иван", "Иванович");
+        Coach coach2 = new Coach("Петров", "Пётр", "Петрович");
+
+        TimeOfDay time = new TimeOfDay(13, 0);
+
+        // Две тренировки в одно и то же время в один и тот же день
+        TrainingSession session1 = new TrainingSession(groupChild, coach1, DayOfWeek.MONDAY, time);
+        TrainingSession session2 = new TrainingSession(groupAdult, coach2, DayOfWeek.MONDAY, time);
+
+        timetable.addNewTrainingSession(session1);
+        timetable.addNewTrainingSession(session2);
+
+        List<TrainingSession> sessions =
+                timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, time);
+
+        Assertions.assertNotNull(sessions);
+        Assertions.assertEquals(2, sessions.size());
+
+        Assertions.assertTrue(sessions.contains(session1));
+        Assertions.assertTrue(sessions.contains(session2));
+    }
+
+    @Test
+    void testGetTrainingSessionsForDayAndTimeWhenNoSessionsAtAll() {
+        Timetable timetable = new Timetable();
+
+        List<TrainingSession> sessions =
+                timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(10, 0));
+
+        Assertions.assertNotNull(sessions);
+        Assertions.assertTrue(sessions.isEmpty());
+    }
 }
