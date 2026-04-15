@@ -46,7 +46,7 @@ public class Timetable {
         return result;
     }
 
-    public Map<Coach, Integer> getCountByCoaches() {
+    public List<CoachTrainingStat> getCoachStatsSortedByCountDesc () {
         Map<Coach, Integer> count = new HashMap<>();
         for (TreeMap<TimeOfDay, List<TrainingSession>> sessionsForDay : timetable.values()) {
             for (List<TrainingSession> sessionAtTime : sessionsForDay.values()) {
@@ -56,6 +56,11 @@ public class Timetable {
                 }
             }
         }
-        return count;
+        List<CoachTrainingStat> result = new ArrayList<>();
+        for (Map.Entry<Coach, Integer> entry : count.entrySet()) {
+            result.add(new CoachTrainingStat(entry.getKey(), entry.getValue()));
+        }
+        result.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
+        return result;
     }
 }
